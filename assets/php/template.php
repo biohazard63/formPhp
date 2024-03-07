@@ -45,15 +45,12 @@
 
             <input type="submit" value="Envoyer">
         </form>
-        <form action="index.php" method="post">
-            <!-- ... -->
-            <input type="submit" value="Envoyer">
-        </form>
-
         <?php if ($success): ?>
             <p class="success">Votre message a été envoyé avec succès !</p>
         <?php endif; ?>
+
+
     </div>
-<script src="../js/script.js"></script>
+    <script src="../js/script.js"></script>
 </body>
 </html>
