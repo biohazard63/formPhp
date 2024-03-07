@@ -10,7 +10,8 @@
     <div class="content">
         <h1>Formulaire</h1>
         <p>Remplissez le formulaire suivant :</p>
-        <form action="index.php" method="post" enctype="multipart/form-data">            <label for="name">Nom :</label>
+        <form action="index.php" method="post" enctype="multipart/form-data">
+            <label for="name">Nom :</label>
             <input type="text" id="name" name="name" placeholder="Votre nom"
                    value="<?php echo isset($data['name']) ? $data['name'] : ''; ?>">
             <?php if (isset($errors['name'])) echo "<p class='erreur'>{$errors['name']}</p>"; ?>
@@ -40,6 +41,7 @@
 
             <label for="file">Upload a file:</label>
             <input type="file" id="file" name="file">
+            <?php if (isset($errors['file'])) echo "<p class='erreur'>{$errors['file']}</p>"; ?>
 
             <label for="newsletter">Inscription à la newsletter</label>
             <input type="checkbox" id="newsletter"
@@ -47,6 +49,8 @@
 
             <input type="submit" value="Envoyer">
         </form>
+
+        <!-- Display success message if the form was submitted successfully -->
         <?php if ($success): ?>
             <p class="success">Votre message a été envoyé avec succès !</p>
         <?php endif; ?>
