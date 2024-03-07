@@ -11,34 +11,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         "phone" => test_input($_POST["phone"]),
         "subject" => test_input($_POST["subject"]),
         "message" => test_input($_POST["message"]),
+        "file" => isset($_FILES["file"]) ? $_FILES["file"] : "",
         "newsletter" => isset($_POST["newsletter"]) ? test_input($_POST["newsletter"]) : ""
     ];
 
     $errors = validate_form_data($data);
 
+   if (isset($_FILES['file'])) {
+    $allowedExtensions = ['doc', 'docx', 'pdf', 'txt', 'jpg', 'png'];
+
+    $maxFileSize = 2 * 1024 * 1024;
+
+    $fileExtension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+
+    if (!in_array($fileExtension, $allowedExtensions)) {
+        $errors['file'] = "Invalid file type. Only .doc, .docx, .pdf, .txt, .jpg and .png files are allowed.";
+    }
+
+    if ($_FILES['file']['size'] > $maxFileSize) {
+        $errors['file'] = "File is too large. Maximum size is 2MB.";
+    }
+
+    if (!isset($errors['file'])) {
+        $uploadDir = 'uploads/';
+        $uploadFile = $uploadDir . basename($_FILES['file']['name']);
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)) {
+            echo "File is valid, and was successfully uploaded.\n";
+            // Add the file information to the data array
+            $data['file_name'] = $_FILES['file']['name'];
+            $data['file_size'] = $_FILES['file']['size'];
+            $data['file_path'] = $uploadFile; // Add this line
+        } else {
+            echo "Possible file upload attack!\n";
+        }
+    }
+}
+
     if (empty($errors)) {
         $success = true;
 
-        // Path to the JSON file
         $file = 'data.json';
 
-        // Check if the file exists
         if (!file_exists($file)) {
-            // If the file doesn't exist, create a new one with an empty array
             file_put_contents($file, json_encode([]));
         }
 
-        // Read the file contents and decode the JSON data into a PHP array
         $fileContents = file_get_contents($file);
         $fileData = json_decode($fileContents, true);
 
-        // Append the new form data to the array
         $fileData[] = $data;
 
-        // Encode the updated array back into JSON and write it to the file
         file_put_contents($file, json_encode($fileData));
-        $data = [];
 
+        $csvFile = 'data.csv';
+
+        $handle = fopen($csvFile, 'a');
+
+        $data['date'] = date('Y-m-d H:i:s');
+
+        fputcsv($handle, $data);
+
+        fclose($handle);
+
+        $data = [];
     }
 }
 

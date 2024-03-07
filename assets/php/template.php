@@ -10,8 +10,7 @@
     <div class="content">
         <h1>Formulaire</h1>
         <p>Remplissez le formulaire suivant :</p>
-        <form action="index.php" method="post">
-            <label for="name">Nom :</label>
+        <form action="index.php" method="post" enctype="multipart/form-data">            <label for="name">Nom :</label>
             <input type="text" id="name" name="name" placeholder="Votre nom"
                    value="<?php echo isset($data['name']) ? $data['name'] : ''; ?>">
             <?php if (isset($errors['name'])) echo "<p class='erreur'>{$errors['name']}</p>"; ?>
@@ -39,9 +38,12 @@
                       placeholder="Votre message"><?php echo isset($data['message']) ? $data['message'] : ''; ?></textarea>
             <?php if (isset($errors['message'])) echo "<p class='erreur'>{$errors['message']}</p>"; ?>
 
+            <label for="file">Upload a file:</label>
+            <input type="file" id="file" name="file">
+
+            <label for="newsletter">Inscription à la newsletter</label>
             <input type="checkbox" id="newsletter"
                    name="newsletter" <?php echo isset($data['newsletter']) && $data['newsletter'] ? 'checked' : ''; ?>>
-            <label for="newsletter">Inscription à la newsletter</label>
 
             <input type="submit" value="Envoyer">
         </form>
@@ -51,6 +53,5 @@
 
 
     </div>
-    <script src="../js/script.js"></script>
 </body>
 </html>
